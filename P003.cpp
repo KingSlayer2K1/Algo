@@ -1,50 +1,63 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited)
-{
-    visited[node]=true;
-    for(int neigh: adj[node])
-    {
-        if(!visited[neigh])
-        {
-            dfs(neigh,adj,visited);
+struct Cell {
+    int row, col, time;
+};
+
+int orangesRotting(vector<vector<int>>& grid) {
+    int m = grid.size(), n = grid[0].size();
+    queue<Cell> q;
+    int freshCount = 0;
+
+    // Step 1: Push all initially rotten oranges into queue
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (grid[i][j] == 2) {
+                q.push({i, j, 0}); // rotten source
+            } else if (grid[i][j] == 1) {
+                freshCount++;
+            }
         }
     }
-}
 
-int count(int v, vector<vector<int>>&adj)
-{
-    vector<bool> visited(v,false);
-    int prov=0;
+    // Directions: up, down, left, right
+    vector<int> dr = {-1, 1, 0, 0};
+    vector<int> dc = {0, 0, -1, 1};
 
-    for(int i=0;i<v;++i)
-    {
-        if(!visited[i])
-        {
-            prov++;
-            dfs(i,adj,visited);
+    int maxTime = 0;
+
+    // Step 2: BFS from all rotten oranges
+    while (!q.empty()) {
+        auto [r, c, t] = q.front();
+        q.pop();
+        maxTime = max(maxTime, t);
+
+        for (int k = 0; k < 4; k++) {
+            int nr = r + dr[k];
+            int nc = c + dc[k];
+
+            if (nr >= 0 && nr < m && nc >= 0 && nc < n && grid[nr][nc] == 1) {
+                grid[nr][nc] = 2;       // make rotten
+                freshCount--;           // one less fresh orange
+                q.push({nr, nc, t + 1});
+            }
         }
     }
-    return prov;
+
+    // Step 3: Check if all fresh oranges rotted
+    return (freshCount > 0) ? -1 : maxTime;
 }
 
-int main()
-{
-    int v,e;
-    cout<<"Enter the number of vertices and edges : ";
-    cin>>v>>e;
+int main() {
+    vector<vector<int>> grid = {
+        {2,1,1},
+        {0,1,1},
+        {1,0,1}
+    };
 
-    vector<vector<int>> adj(v);
+    int result = orangesRotting(grid);
+    cout << "Minimum time to rot all oranges = " << result << endl;
 
-    cout<<"Enter edges : \n";
-    for(int i=0;i<e;++i)
-    {
-        int u,v;
-        cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    cout<<"no. of province: "<<count(v,adj)<<endl;
     return 0;
 }
