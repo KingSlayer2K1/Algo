@@ -49,15 +49,22 @@ int orangesRotting(vector<vector<int>>& grid) {
     return (freshCount > 0) ? -1 : maxTime;
 }
 
-int main() {
-    vector<vector<int>> grid = {
-        {2,1,1},
-        {0,1,1},
-        {1,0,1}
-    };
-
-    int result = orangesRotting(grid);
-    cout << "Minimum time to rot all oranges = " << result << endl;
-
+int main()
+{
+    cout<<"Enter the size of the grid n,m : ";
+    int n,m;
+    cin>>n>>m;
+    cout<<"Enter the elements in the grid : ";
+    vector<vector<int>> grid(m,vector<int>(n));
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++) 
+        {
+            cin >> grid[i][j];  // 0 = empty, 1 = fresh, 2 = rotten
+        }
+    }
+    int result=rott(grid);
+    cout<<"minimum time required = "<<result;
     return 0;
 }
+
